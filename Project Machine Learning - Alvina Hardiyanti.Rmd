@@ -61,13 +61,10 @@ validSet <- train_data_clean[-inTrain, ]
 ```{r}
 set.seed(123)
 fitControl <- trainControl(method = "cv", number = 5, verboseIter = TRUE)
-model_rf <- train(classe ~ ., data = train_data_clean, method = "rf", trControl = fitControl, ntree = 200)
+model_rf <- train(classe ~ ., data = train_data_clean, method = "rf", trControl = fitControl, ntree = 100)
 
 # Menampilkan informasi tentang model
 model_rf
-
-# Tampilkan pentingnya variabel
-varImpPlot(model_rf)
 ```
 
 # 5. Evaluasi model
