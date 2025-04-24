@@ -57,13 +57,11 @@ validSet <- train_data_clean[-inTrain, ]
 # 4. Training model Random Forest
 ```{r}
 set.seed(123)
-model_rf <- randomForest(classe ~ ., data = trainSet, importance = TRUE, ntree = 200)
+fitControl <- trainControl(method = "cv", number = 5, verboseIter = TRUE)
+model_rf <- train(classe ~ ., data = train_data_clean, method = "rf", trControl = fitControl, ntree = 100)
 
 # Menampilkan informasi tentang model
 model_rf
-
-# Tampilkan pentingnya variabel
-varImpPlot(model_rf)
 ```
 
 # 5. Evaluasi model
