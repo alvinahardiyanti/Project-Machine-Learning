@@ -1,5 +1,3 @@
-# Project Machine Learning
-
 # Background of the Assignment
 By using devices such as Jawbone Up, Nike FuelBand, and Fitbit, it is now possible to collect a large amount of data about personal activities at a relatively low cost. These types of devices are part of the quantified self movement—a group of enthusiasts who regularly measure themselves to improve their health, to discover their behavioral patterns, or simply because they are technology fans. One common thing people do is measure how much of a certain activity they perform, but they rarely measure how well they perform it. In this project, your goal is to use data from accelerometers on the belt, forearm, arm, and dumbbell of six participants. They were asked to perform barbell lifts correctly and incorrectly in five different ways. More information is available on the website here:
 http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har
