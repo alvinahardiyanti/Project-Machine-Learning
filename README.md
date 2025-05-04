@@ -1,23 +1,36 @@
-# Project-Machine-Learning
+# Project Machine Learning
 
-The goal of your project is to predict how people perform physical exercises. This is represented by the variable classe in the training dataset. You may use the other variables to make your predictions. You are required to write a report explaining how you built your model, how you applied cross-validation, your thoughts on the expected out-of-sample error, and the reasons behind the choices you made. You will also use your predictive model to make predictions on 20 different test cases.
+# Background of the Assignment
+By using devices such as Jawbone Up, Nike FuelBand, and Fitbit, it is now possible to collect a large amount of data about personal activities at a relatively low cost. These types of devices are part of the quantified self movement—a group of enthusiasts who regularly measure themselves to improve their health, to discover their behavioral patterns, or simply because they are technology fans. One common thing people do is measure how much of a certain activity they perform, but they rarely measure how well they perform it. In this project, your goal is to use data from accelerometers on the belt, forearm, arm, and dumbbell of six participants. They were asked to perform barbell lifts correctly and incorrectly in five different ways. More information is available on the website here:
+http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har
+(see the Weight Lifting Exercise Dataset section).
+
+# Data
+The training data for this project is available here:
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
+The testing data is available here:
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+The data for this project comes from the following source:
+http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har
 
 # Load libraries
-Before performing any data manipulation or modeling, we need to load the necessary libraries for data processing and model building.
+Before performing any data manipulation or modeling, Before performing any data manipulation or modeling, we load the necessary libraries for data cleaning, model training, and evaluation.
 ```{r}
 library(caret)
 library(randomForest)
 library(dplyr)
 ```
 
-## 1. Load Data
+# 1. Load Data
 We start by reading the training and testing datasets, making sure that invalid entries such as "NA", empty strings, and "#DIV/0!" are treated as missing values.
 ```{r}
 train_data <- read.csv("/cloud/project/pml-training.csv", na.strings = c("NA", "", "#DIV/0!"))
 test_data <- read.csv("/cloud/project/pml-testing.csv", na.strings = c("NA", "", "#DIV/0!"))
 ```
 
-## Explore Data
+# Explore Data
 Before cleaning, we explore the structure of the data and check for missing values to understand which columns might need to be removed or handled.
 ```{r}
 # Explore Data
@@ -28,8 +41,9 @@ missing_summary <- sapply(train_data, function(x) sum(is.na(x)))
 missing_summary[missing_summary > 0]
 ```
 
-## 2. Cleaning Data
-To prepare the data for training, we remove irrelevant columns (like IDs and timestamps), eliminate columns with many missing values, ensure feature alignment between training and test sets, and remove near-zero variance predictors. We also convert the target variable classe into a factor.
+# 2. Cleaning Data
+## How the model was built?
+To build the model, we first clean the data by removing columns that are irrelevant or contain too many missing values, ensuring the test and training data have matching features, and remove near-zero variance predictors that provide little to no useful information. We also convert the target variable classe into a factor.
 ```{r}
 # Remove unnecessary columns (ID, timestamps, etc.)
 train_data_clean <- train_data[, -c(1:7)]
@@ -63,7 +77,13 @@ validSet <- train_data_clean[-inTrain, ]
 ```
 
 # 4. Train Random Forest Model
-Now, we train a Random Forest model using cross-validation. This technique helps improve model generalization and reduces the risk of overfitting by training the model on different subsets of the data.
+Now, we train a Random Forest model using cross-validation. 
+
+## Why Random Forest was chosen?
+Random Forest is chosen because it is a powerful ensemble learning algorithm that combines multiple decision trees to improve accuracy and stability. It performs well with high-dimensional data, is robust to noise and overfitting, and requires minimal preprocessing.
+
+## How cross-validation was used?
+To estimate the model’s generalization ability and reduce overfitting, we use 5-fold cross-validation. This means the training set is divided into 5 parts, and the model is trained on 4 parts and validated on the remaining part in a rotating manner.
 ```{r}
 # Train Random Forest model
 set.seed(123)
@@ -80,6 +100,8 @@ After training, we predict the classes for the validation set and use a confusio
 # Evaluate model
 pred_valid <- predict(model_rf, validSet)
 confusionMatrix(pred_valid, validSet$classe)
+cm <- confusionMatrix(pred_valid, validSet$classe)
+cm$overall['Accuracy']
 ```
 
 # 6. Predict on Test Data
@@ -104,4 +126,8 @@ write.table(final_predictions, file = "final_predictions.txt", row.names = FALSE
 ```
 
 # Conclusion
-The Random Forest model achieved high accuracy in predicting the classe variable. This method was chosen for its robustness, resistance to overfitting, and suitability for high-dimensional data. Cross-validation showed that the model generalizes well to unseen data.
+The Random Forest model achieved 100% accuracy in predicting the classe variable on the validation set. The model showed perfect classification, with a 95% confidence interval of (99.94%, 100%). 
+
+This method was chosen for its robustness, resistance to overfitting, and suitability for high-dimensional data. Cross-validation confirmed that the model generalizes well to unseen data, and the combination of preprocessing steps, such as cleaning, near-zero variance removal, and careful data splitting, ensured a high-quality model.
+
+While the model performs excellently on this dataset, it is important to consider the possibility of overfitting if similar data is used for future predictions. Nonetheless, the performance on the validation set confirms the potential strength of the Random Forest model in this context.
